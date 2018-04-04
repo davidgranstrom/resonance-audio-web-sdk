@@ -114,8 +114,6 @@ function Listener(context, options) {
     });
   }
 
-  this._renderer.setRenderingMode('bypass');
-
   // These nodes are created in order to safely asynchronously load Omnitone
   // while the rest of the scene is being created.
   this.input = context.createGain();
