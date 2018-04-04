@@ -134,7 +134,7 @@ Attenuation.prototype.setDistance = function(distance) {
       }
     }
   }
-  this._gainNode.gain.value = gain;
+  this._gainNode.gain.setTargetAtTime(gain, 0, 0.01);
 };
 
 
