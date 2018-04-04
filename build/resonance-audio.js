@@ -3626,8 +3626,8 @@ EarlyReflections.prototype.setListenerPosition = function(x, y, z) {
     if (Utils.DEFAULT_REFLECTION_COEFFICIENTS
         .hasOwnProperty(property)) {
       // Compute and assign delay (in seconds).
-      let delayInSecs = distances[property] / this.speedOfSound;
-      this._delays[property].delayTime.value = delayInSecs;
+      // let delayInSecs = distances[property] / this.speedOfSound;
+      // this._delays[property].delayTime.value = delayInSecs;
 
       // Compute and assign gain, uses logarithmic rolloff: "g = R / (d + 1)"
       let attenuation = this._coefficients[property] / distances[property];
