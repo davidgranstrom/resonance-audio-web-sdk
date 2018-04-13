@@ -91,7 +91,6 @@ function EarlyReflections(context, options) {
   this.input = context.createGain();
   this.output = context.createGain();
   this._lowpass = context.createBiquadFilter();
-  this._delays = {};
   this._gains = {}; // gainPerWall = (ReflectionCoeff / Attenuation)
   this._inverters = {}; // 3 of these are needed for right/back/down walls.
   this._merger = context.createChannelMerger(4); // First-order encoding only.
@@ -100,8 +99,6 @@ function EarlyReflections(context, options) {
   for (let property in Utils.DEFAULT_REFLECTION_COEFFICIENTS) {
     if (Utils.DEFAULT_REFLECTION_COEFFICIENTS
         .hasOwnProperty(property)) {
-      this._delays[property] =
-        context.createDelay(Utils.MAX_DURATION);
       this._gains[property] = context.createGain();
     }
   }
@@ -118,7 +115,6 @@ function EarlyReflections(context, options) {
   for (let property in Utils.DEFAULT_REFLECTION_COEFFICIENTS) {
     if (Utils.DEFAULT_REFLECTION_COEFFICIENTS
         .hasOwnProperty(property)) {
-      this._delays[property].delayTime.value = 0;
       this._gains[property].gain.value = 0;
     }
   }
@@ -133,8 +129,7 @@ function EarlyReflections(context, options) {
   for (let property in Utils.DEFAULT_REFLECTION_COEFFICIENTS) {
     if (Utils.DEFAULT_REFLECTION_COEFFICIENTS
         .hasOwnProperty(property)) {
-      this._lowpass.connect(this._delays[property]);
-      this._delays[property].connect(this._gains[property]);
+      this._lowpass.connect(this._gains[property]);
       this._gains[property].connect(this._merger, 0, 0);
     }
   }
@@ -199,10 +194,6 @@ EarlyReflections.prototype.setListenerPosition = function(x, y, z) {
   for (let property in Utils.DEFAULT_REFLECTION_COEFFICIENTS) {
     if (Utils.DEFAULT_REFLECTION_COEFFICIENTS
         .hasOwnProperty(property)) {
-      // Compute and assign delay (in seconds).
-      // let delayInSecs = distances[property] / this.speedOfSound;
-      // this._delays[property].delayTime.value = delayInSecs;
-
       // Compute and assign gain, uses logarithmic rolloff: "g = R / (d + 1)"
       let attenuation = this._coefficients[property] / distances[property];
       this._gains[property].gain.value = attenuation;
