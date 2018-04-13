@@ -23,7 +23,6 @@
 
 
 // Internal dependencies.
-const LateReflections = require('./late-reflections.js');
 const EarlyReflections = require('./early-reflections.js');
 const Utils = require('./utils.js');
 
@@ -250,8 +249,6 @@ function Room(context, options) {
   let absorptionCoefficients = _getCoefficientsFromMaterials(options.materials);
   let reflectionCoefficients =
     _computeReflectionCoefficients(absorptionCoefficients);
-  let durations = _getDurationsFromProperties(options.dimensions,
-    absorptionCoefficients, options.speedOfSound);
 
   // Construct submodules for early and late reflections.
   this.early = new EarlyReflections(context, {
@@ -260,19 +257,12 @@ function Room(context, options) {
     speedOfSound: options.speedOfSound,
     listenerPosition: options.listenerPosition,
   });
-  this.late = new LateReflections(context, {
-    durations: durations,
-  });
 
   this.speedOfSound = options.speedOfSound;
 
   // Construct auxillary audio nodes.
   this.output = context.createGain();
   this.early.output.connect(this.output);
-  this._merger = context.createChannelMerger(4);
-
-  this.late.output.connect(this._merger, 0, 0);
-  this._merger.connect(this.output);
 }
 
 
@@ -284,12 +274,6 @@ function Room(context, options) {
  * {@linkcode Utils.DEFAULT_ROOM_MATERIALS DEFAULT_ROOM_MATERIALS}.
  */
 Room.prototype.setProperties = function(dimensions, materials) {
-  // Compute late response.
-  let absorptionCoefficients = _getCoefficientsFromMaterials(materials);
-  let durations = _getDurationsFromProperties(dimensions,
-    absorptionCoefficients, this.speedOfSound);
-  this.late.setDurations(durations);
-
   // Compute early response.
   this.early.speedOfSound = this.speedOfSound;
   let reflectionCoefficients =
