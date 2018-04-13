@@ -274,6 +274,7 @@ function Room(context, options) {
  * {@linkcode Utils.DEFAULT_ROOM_MATERIALS DEFAULT_ROOM_MATERIALS}.
  */
 Room.prototype.setProperties = function(dimensions, materials) {
+  let absorptionCoefficients = _getCoefficientsFromMaterials(materials);
   // Compute early response.
   this.early.speedOfSound = this.speedOfSound;
   let reflectionCoefficients =

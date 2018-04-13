@@ -136,7 +136,7 @@ function Source(scene, options) {
     alpha: options.alpha,
     sharpness: options.sharpness,
   });
-  // this._toEarly = context.createGain();
+  this._toEarly = context.createGain();
   // this._toLate = context.createGain();
   this._attenuation = new Attenuation(context, {
     minDistance: options.minDistance,
@@ -153,8 +153,8 @@ function Source(scene, options) {
   // this._toLate.connect(scene._room.late.input);
 
   this.input.connect(this._attenuation.input);
-  // this._attenuation.output.connect(this._toEarly);
-  // this._toEarly.connect(scene._room.early.input);
+  this._attenuation.output.connect(this._toEarly);
+  this._toEarly.connect(scene._room.early.input);
 
   this._attenuation.output.connect(this._directivity.input);
   this._directivity.output.connect(this._encoder.input);
@@ -182,11 +182,14 @@ Source.prototype.setPosition = function(x, y, z) {
   this._position[2] = z;
 
   // Handle far-field effect.
-  // let distance = this._scene._room.getDistanceOutsideRoom(
-  //   this._position[0], this._position[1], this._position[2]);
-  //   let gain = _computeDistanceOutsideRoom(distance);
+  let distance = this._scene._room.getDistanceOutsideRoom(
+    this._position[0],
+    this._position[1],
+    this._position[2]
+  );
+  let gain = _computeDistanceOutsideRoom(distance);
   // this._toLate.gain.value = gain;
-  // this._toEarly.gain.value = gain;
+  this._toEarly.gain.value = gain;
 
   this._update();
 };
