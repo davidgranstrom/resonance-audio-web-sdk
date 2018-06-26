@@ -1,0 +1,6 @@
+CHANGE LOG
+==========
+
+* Removed delay computations from early reflections (early-reflections.js)
+* Removed late reflections from room simulation (room.js)
+* Interpolate gain values in `setDistance()` (attenuation.js)
